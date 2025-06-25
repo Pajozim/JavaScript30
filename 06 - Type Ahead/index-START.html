@@ -7,17 +7,125 @@
   <link rel="icon" href="https://fav.farm/🔥" />
 </head>
 <body>
+  <div id="allContainer">
 
-  <form class="search-form">
-    <input type="text" class="search" placeholder="City or State">
-    <ul class="suggestions">
-      <li>Filter for a city</li>
-      <li>or a state</li>
-    </ul>
-  </form>
+    <form class="search-form">
+      <input id="searchCoS" type="text" class="search" placeholder="City or State">
+      <ul class="suggestions">
+        <li>Filter for a city</li>
+        <li>or a state</li>
+      </ul>
+    </form>
+
+    <div id="showBox"></div>
+
+  </div>
+
 <script>
-const endpoint = 'https://gist.githubusercontent.com/Miserlou/c5cd8364bf9b2420bb29/raw/2bf258763cdddd704f8ffd3ea9a3e81d25e2c6f6/cities.json';
+// version 2.0 (city and state)
+const fetchpoint = 'https://gist.githubusercontent.com/Miserlou/c5cd8364bf9b2420bb29/raw/2bf258763cdddd704f8ffd3ea9a3e81d25e2c6f6/cities.json';
 
+const searchInput = document.getElementById('searchCoS');
+
+searchInput.addEventListener('input', async function (e) { // input from AI (before was change and focus)
+
+  const input = e.target.value;
+  try { // from MDN
+    const response = await fetch(fetchpoint);
+    if (!response.ok) {
+      throw new Error(`Response status: ${response.status}`);
+    }
+
+    const CoS_List = await response.json();
+    const workableData = Array.from(CoS_List);
+    const wData = workableData.filter(Obj => Obj.city.includes(input) || Obj.state.includes(input)); // after a long hour I learned that "===" is too strict and I had to complete the name for the filter working (with help of AI, .includes though came not from AI) 
+
+    // delete former entries/cells
+    if (input.length > 1 ) {
+      let formerInput = input.split('');
+      formerInput.pop();
+      formerInput = formerInput.join('');
+      console.log('-fi joined-', formerInput, typeof formerInput);
+
+      const allCells = document.querySelectorAll(`.entry.${formerInput}`).forEach(el => el.remove());
+    };
+
+    const firstObject = wData[0];
+    
+    const showBox = document.getElementById('showBox');
+    const headerRow = document.createElement('div');
+    headerRow.id = 'headerrow' ;
+    
+    const containerList = document.getElementById('containerList') ?? document.createElement('div');
+
+    if (!showBox.querySelector('#headerrow')) {
+      showBox.appendChild(headerRow);
+
+      // header
+      Object.keys(firstObject).forEach(key => {
+        const headerCell = document.createElement('div');
+        headerCell.id = key;
+        headerCell.classList.add('header');
+        headerCell.style.color = '#e6e6e6';
+        headerCell.innerHTML = `<h4> ${key} </h4>`;
+        headerCell.style.backgroundColor = '#' + Math.floor(Math.random()*16777215).toString(16);
+        headerRow.appendChild(headerCell);
+      })
+
+      containerList.id = 'containerList';
+      showBox.appendChild(containerList);
+    };
+
+    // entries
+    Object.values(wData).forEach((entry, i) => {
+      const entryRow = document.createElement('div');
+      entryRow.classList.add('entry',`${input}`);
+      entryRow.id =  `eR-${i}`;
+      containerList.appendChild(entryRow);
+      Object.values(entry).forEach(value => {
+        const valueCell = document.createElement('div');
+        valueCell.classList.add('value');
+        valueCell.innerText = value;
+        entryRow.appendChild(valueCell)
+      });
+    });
+
+    /*
+    version 1.0 (city only)
+    if (showBox.children.length > 0) document.querySelectorAll('.showcase').forEach(child => {
+      if (!child.id.includes(`${input}`)) {
+        console.log('-L6.5-', child);
+        child.remove();
+      }
+    });
+    if (wData.length >= 5) document.getElementById('showBox').innerText = 'too many entries';
+    else {
+      if (document.getElementById('showBox').firstChild.nodeType === Node.TEXT_NODE) document.getElementById('showBox').firstChild.remove() ;
+      console.log('-L7-', 'inside conditional');
+      wData.forEach(Obj =>{
+        const id = Obj.city;
+        console.log('-L8-', 'inside forEach function', Obj.city, '===', id, '&', document.getElementById(id)); //  getElementById turns out to be null
+        const showcase = document.getElementById(id) ?? document.createElement('div');
+        if (showcase.classList !=='.showcase') showcase.classList.add('showcase');
+        if (showcase.id === '') showcase.id = Obj.city; 
+        if (showcase.style.backgroundColor === '') showcase.style.backgroundColor = '#' + Math.floor(Math.random()*16777215).toString(16); // from Internet //keep the bgColor
+        console.log('-L8.5-', Math.floor(Math.random()*16777215).toString(16));
+        const objCount = Object.keys(Obj); // help from AI
+        console.log('-L9-', objCount, 'length', objCount.length);
+        showBox.appendChild(showcase);
+        for (const [key, value] of Object.entries(Obj)) {// help from AI
+          console.log('-L10-', 'inside processor of Entries', '- ', key, ' : ', value);
+          const pElement               = document.createElement('p');
+          pElement.innerHTML           = `<p class="anteValue">` + key + ':</p> ' + value;
+          console.log('-L11-', pElement, 'text: ', pElement.innerText)
+          showcase.appendChild(pElement);         
+        }
+      });
+    }*/
+  } catch (error) {
+    console.error(error.message);
+  }
+});
 </script>
 </body>
 </html>

@@ -35,31 +35,75 @@
       'Berne, Eric', 'Berra, Yogi', 'Berry, Wendell', 'Bevan, Aneurin', 'Ben-Gurion, David', 'Bevel, Ken', 'Biden, Joseph', 'Bennington, Chester', 'Bierce, Ambrose',
       'Billings, Josh', 'Birrell, Augustine', 'Blair, Tony', 'Beecher, Henry', 'Biondo, Frank'
     ];
+
+    Object.defineProperty(Number.prototype,'range',{
+      configurable : true,
+      writable     : true,
+      value(min,max) {
+          return this >= min && this <= max;
+      }
+    });
     
     // Array.prototype.filter()
     // 1. Filter the list of inventors for those who were born in the 1500's
 
+    const bornIn15th = inventors.filter(obj => obj.year > 1500 && obj.year < 1600);
+    console.table(bornIn15th);
+
+    const bornIn = inventors.filter(obj => obj.year.range(1500, 1599));
+    //console.log(bornIn);
+
     // Array.prototype.map()
     // 2. Give us an array of the inventors first and last names
 
+    const names = inventors.map(obj => obj.first + ' ' + obj.last);
+    //console.log(names);
+
     // Array.prototype.sort()
     // 3. Sort the inventors by birthdate, oldest to youngest
+    inventors.sort((a,b) => a.year - b.year);
+    //console.log(inventors);
 
     // Array.prototype.reduce()
     // 4. How many years did all the inventors live all together?
+    const totalYears = inventors.reduce((acc,cVal) => acc + (cVal.passed - cVal.year), 0);
+    //console.log(totalYears);
 
     // 5. Sort the inventors by years lived
+    //const longevity = inventors.sort((a,b) => a.passed - b.year);
+    //const compare = inventors.map(obj => ({yearsLived: obj.passed - obj.year, name: obj.last}));
+    //const longevity = compare.sort((a,b) => a.yearsLived - b.yearsLived);
+    //console.log('control group', compare);
+    //console.log('long', longevity);
+
+    // after AI consult
+    const longevity = inventors
+    .map(obj => ({yearsLived: obj.passed - obj.year, name: obj.last}))
+    .sort((a,b) => a.yearsLived - b.yearsLived);
+    //console.log('long', longevity);
 
     // 6. create a list of Boulevards in Paris that contain 'de' anywhere in the name
     // https://en.wikipedia.org/wiki/Category:Boulevards_in_Paris
 
+    const Boulevards = ["Boulevard de l'Amiral-Bruix", "Boulevard de la Chapelle", "Boulevard de Clichy", "Boulevard de l'Hôpital", "Boulevard de la Madeleine", "Boulevard de Magenta", "Boulevard Marguerite-de-Rochechouart", "Boulevard du Montparnasse", "Boulevard de Sébastopol", "Boulevard de Strasbourg"];
+
 
     // 7. sort Exercise
     // Sort the people alphabetically by last name
+    const peopleSorted = people.sort();
+    //console.log(peopleSorted);
 
     // 8. Reduce Exercise
     // Sum up the instances of each of these
-    const data = ['car', 'car', 'truck', 'truck', 'bike', 'walk', 'car', 'van', 'bike', 'walk', 'car', 'van', 'car', 'truck' ];
+    //AI consultation
+    const data = ['car', 'car', 'truck', 'truck', 'bike', 'walk', 'car', 'van', 'bike', 'walk', 'car', 'van', 'car', 'truck' ]
+    .reduce((acc, item) => 
+      {
+       acc[item] = (acc[item] || 0) + 1;
+       return acc;      
+      }, {});
+    //console.log(data);
+
 
   </script>
 </body>

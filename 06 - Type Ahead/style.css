@@ -4,10 +4,19 @@ html {
   font-family: 'helvetica neue';
   font-size: 20px;
   font-weight: 200;
+  height: 100%;
+}
+
+body {
+  padding: 0;
+  margin: 0;
+  border: 0;
 }
 
 *, *:before, *:after {
   box-sizing: inherit;
+  scrollbar-width: 0;
+  line-height: 1;
 }
 
 input {
@@ -71,4 +80,80 @@ span.population {
 
 .hl {
   background: #ffc600;
+}
+
+#allContainer {
+  height: 100vh;
+  padding-bottom: 1%;
+  display: flex;
+  flex-direction: column;
+  align-content: space-around;
+  justify-content: flex-start;
+  align-items: center;
+  flex-wrap: nowrap;
+  background-color: violet;
+}
+
+#showBox {
+  height: 66%;
+  display: flex;
+  background-color: cadetblue;
+  width: 98%;
+  border-radius: 1em;
+  text-align: center;
+  font-family: monospace;
+  color: rgb(71, 71, 71);
+  margin-bottom: .33%;
+  flex-direction: column;
+  flex-wrap: nowrap;
+}
+
+#headerrow, .entry {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: center;
+}
+
+#headerrow {
+  border-radius: 1em 1em 0 0;
+  overflow: hidden;
+  min-height: 15%;
+  max-height: 100px;
+}
+
+#containerList {
+  border-radius: 0 0 1em 1em;
+  overflow-y: auto;
+  border: 10px solid cadetblue;
+}
+
+#headerrow > div, .entry > div {
+  width: 16%;
+  height: 10vh;
+  padding: 1%;
+  overflow-wrap: anywhere;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#headerrow > div > h4 {
+  text-align:center;
+}
+
+#containerList div {
+  color: aliceblue;
+}
+
+*::-webkit-scrollbar , #containerList::-webkit-scrollbar {
+  display: none;
+}
+
+.anteValue {
+  color: #f0f0f0;
+  font-weight: bold;
+  margin: 0 0 .66% 0;
 }

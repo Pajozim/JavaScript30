@@ -10,9 +10,9 @@
 
     <div class="clock">
       <div class="clock-face">
-        <div class="hand hour-hand"></div>
-        <div class="hand min-hand"></div>
-        <div class="hand second-hand"></div>
+        <div class="hand second"></div>
+        <div class="hand minute"></div>
+        <div class="hand hour"></div>
       </div>
     </div>
 
@@ -58,17 +58,61 @@
     }
 
     .hand {
-      width: 50%;
-      height: 6px;
-      background: black;
+      border-radius: 1em;
+    }
+
+    .second, .minute, .hour  {
+      width: 18px;
+      height: 30%;
+      background: salmon;
       position: absolute;
-      top: 50%;
+      top: 0;
+      left: 50%;
+      transform-origin: bottom;
+      translate: -50% 66.66%;
+    }
+
+    .minute {
+      width: 12px;
+      height: 40%;
+      background: darkmagenta;
+      translate: -50% 25%;
+    }
+
+    .second {
+      width: 6px;
+      height: 50%;
+      background: black;
+      translate: -50% 0%;
     }
 
   </style>
 
   <script>
 
+    const [second, minute, hour] = ['second', 'minute', 'hour'].map(clsn => document.querySelector(`.${clsn}`));
+    let now = new Date();
+    secNow = (now.getSeconds() * 6) + 6, // without +6 it would lag by almost one second
+    minNow = (now.getMinutes() * 6) + ((now.getSeconds() / 60) * 6),
+    horNow = ((now.getHours() % 12) * 30) + ((now.getMinutes() / 60) * 30 ); // get average position depending on how far the minute is
+
+    function rotDegrees(pmtr, deg) {
+      return pmtr.style.transform = `rotate(${deg}deg)`;
+    };
+
+    [secNow, minNow, horNow].forEach( (deg, i) => rotDegrees([second, minute, hour][i], deg));
+
+    rotDegrees(second, secNow);
+    rotDegrees(minute, minNow);
+    rotDegrees(hour, horNow);
+
+    setInterval(() => {
+      secNow = secNow >= 360 ? 6 : secNow + 6;
+      minNow = minNow >= 360 ? .1 : (Math.round((minNow + .1) * 10) / 10); 
+      horNow = horNow >= 360 ? .0083 : (Math.round((horNow + .0083) * 10000) / 10000); 
+      console.log('activating', secNow, 'min', minNow, 'hour', horNow);
+      [second, minute, hour].forEach((el, i) => el.style.transform = `rotate(${[secNow, minNow, horNow][i]}deg)`);
+    }, 1000);
 
   </script>
 </body>

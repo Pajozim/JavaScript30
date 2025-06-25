@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -6,13 +6,105 @@
   <link rel="icon" href="https://fav.farm/🔥" />
 </head>
 <body>
-<canvas id="draw" width="800" height="800"></canvas>
+<canvas id="draw"></canvas>
 <script>
+
+const canvas = document.getElementById('draw');
+const ctx = canvas.getContext("2d");
+
+function canvasSizer() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+window.addEventListener("resize", () => {
+  canvasSizer();
+});
+canvasSizer();
+
+Object.defineProperty(Number.prototype,'range',{
+  configurable : true,
+  writable     : true,
+  value        : function(min, max) {
+    return this >= min && this <= max;
+  }
+});
+
+function getRandInt(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+let isActive = false;
+
+canvas.addEventListener("mousedown", (ev) => {
+  isActive = true;
+
+  if (!isActive) return;
+
+  const clrBefore = Array.from({length: 3}, () => Math.floor(Math.random() * 256));
+  let changClr = null;
+  let coordBefore = Math.sqrt(Math.pow(ev.clientX, 2) + Math.pow(ev.clientY, 2));
+  let subtrahend = { t: Date.now(), coord: coordBefore };
+  let lastX = ev.clientX, lastY = ev.clientY;
+
+  canvas.onmousemove = (e) => {
+    ctx.beginPath();
+
+    ctx.moveTo(lastX, lastY);
+    // go to
+    ctx.lineTo(e.offsetX, e.offsetY);
+    ctx.stroke();
+    [lastX, lastY] = [e.offsetX, e.offsetY];
+
+    const speedtorad = (eve) => {
+      const coordNow = Math.sqrt(Math.pow(eve.clientX, 2) + Math.pow(eve.clientY, 2));
+      let minuend = { t: Date.now(), coord: coordNow };
+      
+      const timeDiff = (Math.abs(minuend.t - subtrahend.t)) === 0 ? 100 : Math.abs(minuend.t - subtrahend.t);
+      const distance = Math.abs(minuend.coord - subtrahend.coord) === 0 ? 1 : Math.abs(minuend.coord - subtrahend.coord);
+      const speed = Math.abs(distance / timeDiff) * 10;
+      console.log('factors', speed); 
+      subtrahend = minuend;
+      subtrahend.t += 20
+      return speed;
+    };
+
+    ctx.arc(e.clientX, e.clientY, speedtorad(e), 0, Math.PI * 2, true);
+    //ctx.lineWidth = speedtorad(e);
+
+    if (changClr === null) {
+      changClr = clrBefore;
+    }
+    else {
+      const ind = getRandInt(0, 2);
+      changClr[ind] = Math.max(0, Math.min(255, changClr[ind] + getRandInt(-10, 10)));
+    }
+
+    ctx.fillStyle = ctx.strokeStyle = `rgb(${changClr[0]}, ${changClr[1]}, ${changClr[2]})`;
+    ctx.fill();
+    ctx.stroke();
+  }
+});
+
+canvas.addEventListener("mouseup", (e) => {
+  isActive = false;
+  canvas.onmousemove = null;
+});
+
+
 </script>
 
 <style>
-  html, body {
+  ::-webkit-scrollbar {
+    width: 0; /* Width of the entire scrollbar */
+  }
+
+  * {
     margin: 0;
+    padding: 0;
+  }
+
+  canvas {
+    background-color: grey;
   }
 </style>
 

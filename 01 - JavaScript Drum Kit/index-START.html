@@ -60,6 +60,56 @@
 
 <script>
 
+/* ante inspection of index-FINISHEDhtml
+const allkbds     = Array.from(document.querySelectorAll('kbd')).map(kbd => kbd.textContent);
+console.log(allkbds);
+
+const allaudios   = document.querySelectorAll('audio');
+console.log(allaudios);
+
+document.addEventListener('keydown', (e) => {
+  const keyIndex = allkbds.findIndex(letter => letter.toLowerCase() === e.key.toLowerCase());
+  console.log(keyIndex);
+  if (keyIndex === -1 || undefined) return;
+  else {
+    const audio = allaudios[keyIndex];
+    audio.play();
+  };
+});
+*/
+
+// post inspection
+document.addEventListener('keydown', (e) => {
+  console.log(e.target, 'keyCode', e.keyCode);
+  const audio = document.querySelector(`audio[data-key="${e.keyCode}"]`);
+  const key   = document.querySelector(`.key[data-key="${e.keyCode}"]`);
+
+  if (!audio) return;
+  
+  const allKeys = document.querySelectorAll('.key')
+  allKeys.forEach(key => key.classList.remove('playing'));
+
+  key.classList.add('playing');
+  audio.currentTime = 0;
+  audio.play();
+  audio.addEventListener('ended', () => key.classList.remove('playing'))
+});
+
+document.addEventListener('click', (e) => {
+  console.log('fired', 'e.target:', e.target, 'eTParent', e.target.parentElement);
+  const eT = e.target;
+  const eTParent = eT.parentElement;
+  if (eT.classList.contains('key') || eTParent.classList.contains('key')) {
+    console.log('passed');
+    const dKeyValue = eT.getAttribute('data-key') ?? eTParent.getAttribute('data-key');
+    console.log('dKV', dKeyValue);
+    const audio = document.querySelector(`audio[data-key="${dKeyValue}"]`);
+    console.log(audio);
+    audio.play();
+  }
+  else return console.log('nope');
+});
+
 </script>
 
 
